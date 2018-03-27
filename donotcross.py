@@ -22,8 +22,11 @@ class MySMClass(sm.SM):
         left = ground[0]
         right = ground[1]
         print(left,right)
-        next_state = state + 0.01
-        return next_state, io.Action(fv=0, rv=0)
+        #next_state = state + 0.01
+        if left < 400 and right < 400:
+                return 'halt', io.Action(0,0)
+        else:
+                return state, io.Action(fv=1, rv=0)
 
     #########################################
     # Don't modify the code below.
