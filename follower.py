@@ -5,7 +5,7 @@ from libdw import sm
 from boxworld import thymio_world
 from time import sleep
 class MySMClass(sm.SM):
-	start_state='start'
+	start_state='finding'
 	def get_next_values(self, state, inp):
 		if inp.button_backward:
 			return 'halt', io.Action(0,0)
@@ -14,19 +14,30 @@ class MySMClass(sm.SM):
 		right = ground[1]
 		print(left,right)
 	#####################################
-		if state == 'start':
+		if state == 'finding':
 			if left < 400 and right < 400:
-				sleep(0.5)
-				return 'found', io.Action(fv=0.1, rv=0)
+				print('found, turning left')
+				return 'found', io.Action(fv=0, rv=0.5)
 			else:
-				return 'start', io.Action(fv=0.1, rv=0)
-		if state == 'found':
+				print('finding, straight')
+				return 'finding', io.Action(fv=0.1, rv=0)
+		elif state == 'found':
 			if left >= 400 and right < 400:
-				return 'wb', io.Action(fv=0,rv=0) 
-			else:
+				print('edge, straight')
+				return 'edge', io.Action(fv=0.1,rv=0) 
+			elif left < 400 and right < 400:
+				print('found, turning left')
 				return 'found',io.Action(fv=0,rv=0.5)
-		else:
-			return 'start',io.Action(fv=0.1,rv=0)
+		elif state == 'edge':
+			if left < 400 and right < 400:
+				print('edge, turning left')
+				return 'edge',io.Action(fv=0,rv=0.5)
+			elif left >= 400 and right >= 400:
+				print('edge, turning right')
+				return 'edge',io.Action(fv=0,rv=-0.5)
+			else:
+				print('edge, straight')
+				return 'edge',io.Action(fv=0.1,rv=0) 
 	#########################################
 	def done(self,state):
 		if state=='halt':
